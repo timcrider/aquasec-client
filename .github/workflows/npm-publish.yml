@@ -9,7 +9,9 @@ on:
 
 jobs:
   build:
-    runs-on: mcr.microsoft.com/devcontainers/typescript-node:0-18
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/devcontainers/typescript-node:0-18
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
