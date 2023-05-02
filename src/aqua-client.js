@@ -192,6 +192,25 @@ class AquaClient {
 
     return url.toString();
   }
+
+  fetchToken(credentials) {
+    return this.request({method: 'POST', endpoint: '/api/v1/login', body: credentials.fetch()});
+  }
+
+  authenticate(credentials) {
+    return new Promise (async (resolve, reject) => {
+      try {
+        let token = await this.fetchToken(credentials);
+        this.setToken(token.token);
+
+        // @todo check options to reutrn token or true
+        resolve(token);
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
 }
 
 module.exports = AquaClient;
