@@ -8,6 +8,7 @@ class Credentials {
    * @param {*} iv 
    */
   constructor(algorithm = 'aes-256-cbc', key = crypto.randomBytes(32), iv = crypto.randomBytes(16)) {
+    this._hasData = false;
     this._algorithm = algorithm;
     this.setKey(key);
     this.setIv(iv);
@@ -18,7 +19,7 @@ class Credentials {
     Object.defineProperty(this, "_iv", {enumerable: false, writable: false});
     Object.preventExtensions(this);
     Object.seal(this);
-  }
+  };
 
   /**
    * 
@@ -32,8 +33,7 @@ class Credentials {
     Object.defineProperty(this, "_key", {enumerable: false, writable: true});
     this._key = key;
     Object.defineProperty(this, "_key", {enumerable: false, writable: false});
-
-  }
+  };
 
   /**
    * 
@@ -47,7 +47,7 @@ class Credentials {
     Object.defineProperty(this, "_iv", {enumerable: false, writable: true});
     this._iv = iv;
     Object.defineProperty(this, "_iv", {enumerable: false, writable: false});
-  }
+  };
 
   /**
    * 
@@ -63,7 +63,8 @@ class Credentials {
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
     this._encrypted = encrypted;
-  }
+    this._hasData = true;
+  };
 
   fetch() {
     const decipher = crypto.createDecipheriv(this._algorithm, this._key, this._iv);
@@ -76,7 +77,11 @@ class Credentials {
     } catch (err) {
       return decrypted;
     }
-  }
+  };
+
+  hasData() {
+    return this._hasData;
+  };
 }
 
 module.exports = Credentials;

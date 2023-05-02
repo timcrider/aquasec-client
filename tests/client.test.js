@@ -1,22 +1,43 @@
 const TestMeta = {
   name: 'AquaClient'
 };
+const common = require('./lib/common');
+const testlog = common.testLog(TestMeta.name);
+
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const AquaClient = require('../src/aqua-client');
+const LocalRestServer = require('../src/dev/localsrv');
 
 // Test data
 const TestCredentials = require('./data/test-credentials.json');
 
 // Test client
-const client = new AquaClient();
+const client = new AquaClient({instance: 'https://localhost:3000'});
 
 // Default tests
 
-test(`(${TestMeta.name}) Checking setting token`, (t) => {
+test(testlog('Checking setting token'), (t) => {
   client.setToken(TestCredentials.token);
 });
 
-test(`(${TestMeta.name}) Checking encrypted token matches test token`, (t) => {
+test(testlog('Checking encrypted token matches test token'), (t) => {
   assert.deepEqual(client._token.fetch(), TestCredentials.token);
+});
+
+test(testlog('Testing express binding'), async (t) => {
+  let localsrv = new LocalRestServer();
+
+  // start local web server
+  console.log(testlog(`Starting local server...`, 'local-rest-server'));
+  await localsrv.start();
+
+  // hit the main endpoint and ensure we got a thing
+  console.log(testlog('Checking root endpoint for a valid rest server', 'local-rest-server'));
+  let x = await client.request({method: 'GET', endpoint: '/', querystring: {page: 1, limit: 10}});
+  assert.deepEqual(x, {message: 'Hello World!', ok: true, foo: 'bar'});
+
+  // stop local web server
+  console.log(testlog(`Stopping local server...`, 'local-rest-server'));
+  localsrv.stop(); 
 });

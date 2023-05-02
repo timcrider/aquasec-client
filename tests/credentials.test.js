@@ -1,6 +1,9 @@
 const TestMeta = {
   name: `Credentials`
 };
+const common = require('./lib/common');
+const testlog = common.testLog(TestMeta.name);
+
 const test = require(`node:test`);
 const assert = require(`node:assert/strict`);
 const crypto = require(`crypto`);
@@ -15,27 +18,27 @@ const aes192Credentials = new Credentials(`aes192`, crypto.randomBytes(24));
 
 // Default tests
 
-test(`(${TestMeta.name}) Encrypting test credentials`, (t) => {
+test(testlog('Encrypting test credentials', 'default'), (t) => {
   credentials.store(TestCredentials);
 });
 
-test(`(${TestMeta.name}) Checking encrypted credentials are encrypted`, (t) => {
+test(testlog('Checking encrypted credentials are encrypted', 'default'), (t) => {
   assert.notDeepEqual(credentials._encrypted, TestCredentials, `Credentials are not the same`);
 });
 
-test(`(${TestMeta.name}) Checking decrypted credentials are decrypted`, (t) => {
+test(testlog('Checking decrypted credentials are decrypted', 'default'), (t) => {
   assert.deepEqual(credentials.fetch(), TestCredentials);
 });
 
 // AES192 tests
-test(`(${TestMeta.name}) Encrypting test credentials (aes192)`, (t) => {
+test(testlog('Encrypting test credentials', 'aes192'), (t) => {
   aes192Credentials.store(TestCredentials);
 });
 
-test(`(${TestMeta.name}) Checking encrypted credentials are encrypted (aes192)`, (t) => {
+test(testlog('Checking encrypted credentials are encrypted', 'aes192'), (t) => {
   assert.notDeepEqual(aes192Credentials._encrypted, TestCredentials, `Credentials are not the same`);
 });
 
-test(`(${TestMeta.name}) Checking decrypted credentials are decrypted (aes192)`, (t) => {
+test(testlog('Checking decrypted credentials are decrypted', 'aes192'), (t) => {
   assert.deepEqual(aes192Credentials.fetch(), TestCredentials);
 });

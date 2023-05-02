@@ -1,12 +1,11 @@
 const https = require('https');
-const querystring = require('querystring');
 const credentials = require('./credentials');
 const { URL } = require('node:url');
-const { get } = require('http');
 
 class AquaClient {
   constructor(args={}) {
     this._instance = null;
+    this._port = null;
 
     if (args.instance) {
       this.setInstance(args.instance);
@@ -32,8 +31,8 @@ class AquaClient {
     if (typeof instance !== 'string') {
       throw new Error('Instance must be a string');
     }
+      this._instance = instance;
 
-    this._instance = instance;
   };
 
   /**
@@ -46,7 +45,54 @@ class AquaClient {
     Object.defineProperty(this, "_token", {enumerable: false, writable: false});
   };
 
-  request() {};
+  request(args={method: 'GET', endpoint: '', querystring: {}, headers: {}, postData: {}}) {
+    let target = this.buildUrl(args.endpoint, args.querystring);
+    const isPost = args.method === 'POST';
+
+    // if args.headers is an empty object, add Accept and ContentType headers to 'application/json'
+    if (typeof args.headers !== 'object' || Object.keys(args.headers).length === 0) {
+      args.headers = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      };
+    }
+
+    if (isPost) {
+      args.headers['Content-Length'] = Buffer.byteLength(args.postData);
+    }
+
+    if (this._token.hasData() && !args.headers['Authorization']) {
+      args.headers['Authorization'] = `Bearer ${this._token.fetch()}`;
+    }
+
+    return new Promise((resolve, reject) => {
+      let responseData = [];
+
+      let request = https.request(target, {
+        method: args.method,
+        headers: args.headers,
+        rejectUnauthorized: false // @todo make this configurable
+      }, (response) => {
+        response.on('data', (chunk) => {
+          responseData.push(chunk);
+        });
+
+        response.on('end', () => {
+          let responseString = Buffer.concat(responseData).toString();
+          let responseObject = JSON.parse(responseString);
+
+          resolve(responseObject);
+        });
+      });
+
+      request.on('error', (err) => {
+        reject(err);
+      });
+
+      isPost && args.postData && request.write(args.postData);
+      request.end();
+    });
+  };
   get() {};
   post() {};
 
@@ -113,6 +159,10 @@ class AquaClient {
       for (const [key, value] of Object.entries(qs)) {
         url.searchParams.append(key, value);
       }
+    }
+
+    if (this._port) {
+      url.port = this._port;
     }
 
     return url.toString();
