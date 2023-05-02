@@ -3,7 +3,7 @@
     "dotenv": "^16.0.3",
     "dotenv-expand": "^10.0.0"
   },
-  "name": "aquasec-client",
+  "name": "@timcrider/aquasec-client",
   "version": "0.0.1",
   "main": "index.js",
   "directories": {
