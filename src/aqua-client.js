@@ -3,6 +3,10 @@ const credentials = require('./credentials');
 const { URL } = require('node:url');
 
 class AquaClient {
+  /**
+   * 
+   * @param {*} args 
+   */
   constructor(args={}) {
     this._instance = null;
     this._port = null;
@@ -45,6 +49,11 @@ class AquaClient {
     Object.defineProperty(this, "_token", {enumerable: false, writable: false});
   };
 
+  /**
+   * 
+   * @param {*} args 
+   * @returns Promise
+   */
   request(args={method: 'GET', endpoint: '', querystring: {}, headers: {}, body: {}}) {
     let target = this.buildUrl(args.endpoint, args.querystring);
     const isPost = args.method === 'POST';
@@ -154,7 +163,6 @@ class AquaClient {
         let page = await this.getPage(path, qs, i, this._options.per_page_max);
         if (page.result) {
           all = [...all, ...page.result];
-//          all = all.concat(page.result);
         }
       }
 
