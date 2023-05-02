@@ -45,7 +45,7 @@ class AquaClient {
     Object.defineProperty(this, "_token", {enumerable: false, writable: false});
   };
 
-  request(args={method: 'GET', endpoint: '', querystring: {}, headers: {}, postData: {}}) {
+  request(args={method: 'GET', endpoint: '', querystring: {}, headers: {}, body: {}}) {
     let target = this.buildUrl(args.endpoint, args.querystring);
     const isPost = args.method === 'POST';
 
@@ -58,7 +58,8 @@ class AquaClient {
     }
 
     if (isPost) {
-      args.headers['Content-Length'] = Buffer.byteLength(args.postData);
+      args.body = JSON.stringify(args.body);
+      args.headers['Content-Length'] = args.body.length;
     }
 
     if (this._token.hasData() && !args.headers['Authorization']) {
@@ -89,12 +90,28 @@ class AquaClient {
         reject(err);
       });
 
-      isPost && args.postData && request.write(args.postData);
+      isPost && args.body && request.write(args.body);
       request.end();
     });
   };
-  get() {};
-  post() {};
+
+  /**
+   * 
+   * @param {*} args 
+   * @returns 
+   */
+  get(args={endpoint: '', querystring: {}, headers: {}}) {
+    return this.request({method: 'GET', ...args});
+  };
+
+  /**
+   * 
+   * @param {*} args 
+   * @returns 
+   */
+  post(args={endpoint: '', querystring: {}, headers: {}, body: {}}) {
+    return this.request({method: 'POST', ...args});
+  };
 
   /**
    * 
