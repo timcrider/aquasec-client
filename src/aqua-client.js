@@ -1,6 +1,7 @@
 const https = require('https');
 const credentials = require('./credentials');
 const { URL } = require('node:url');
+const Package = require('../package.json');
 
 /**
  * AquaClient class
@@ -224,6 +225,16 @@ class AquaClient {
         reject(err);
       }
     });
+  }
+
+  /**
+   * Fetch version matrix
+   * @returns {*} Version matrix
+   */
+  version() {
+    return {
+      client: Package.version
+    };
   }
 
 }
