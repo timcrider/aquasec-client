@@ -1,10 +1,9 @@
 {
-  "dependencies": {
-    "dotenv": "^16.0.3",
-    "dotenv-expand": "^10.0.0"
-  },
   "name": "@timcrider/aquasec-client",
-  "version": "0.0.5",
+  "version": "0.0.6",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "main": "index.js",
   "directories": {
     "test": "tests"
@@ -12,10 +11,21 @@
   "scripts": {
     "test": "node --test-reporter=spec --test-reporter=spec --test-reporter-destination=stdout --test-reporter-destination=test.log --test tests/*.js"
   },
-  "keywords": [],
+  "keywords": ["aqua", "aquasec", "security", "api", "client", "rest"],
   "author": "Timothy M. Crider <timcrider@gmail.com>",
   "license": "MIT",
   "description": "Simple REST client for AquaSec API",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com:timcrider/aquasec-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/timcrider/aquasec-client/issues"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "dotenv-expand": "^10.0.0"
+  },
   "devDependencies": {
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
