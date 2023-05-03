@@ -4,7 +4,7 @@
     "dotenv-expand": "^10.0.0"
   },
   "name": "@timcrider/aquasec-client",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "index.js",
   "directories": {
     "test": "tests"
@@ -13,9 +13,9 @@
     "test": "node --test-reporter=spec --test-reporter=spec --test-reporter-destination=stdout --test-reporter-destination=test.log --test tests/*.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "author": "Timothy M. Crider <timcrider@gmail.com>",
+  "license": "MIT",
+  "description": "Simple REST client for AquaSec API",
   "devDependencies": {
     "body-parser": "^1.20.2",
     "express": "^4.18.2",

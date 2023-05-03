@@ -1,11 +1,14 @@
 const crypto = require('crypto');
 
+/**
+ * Credentials class
+ */
 class Credentials {
   /**
-   * 
-   * @param {*} algorithm 
-   * @param {*} key 
-   * @param {*} iv 
+   * Create a new Credentials instance
+   * @param {*} algorithm
+   * @param {*} key
+   * @param {*} iv
    */
   constructor(algorithm = 'aes-256-cbc', key = crypto.randomBytes(32), iv = crypto.randomBytes(16)) {
     this._hasData = false;
@@ -22,7 +25,7 @@ class Credentials {
   };
 
   /**
-   * 
+   * Set the encryption key
    * @param {*} key Key used to encrypt/decrypt data
    */
   setKey(key) {
@@ -36,7 +39,7 @@ class Credentials {
   };
 
   /**
-   * 
+   * Set the initialization vector
    * @param {*} iv Initialization vector
    */
   setIv(iv) {
@@ -50,7 +53,7 @@ class Credentials {
   };
 
   /**
-   * 
+   * Store and encrypt a string or simple object
    * @param {*} data String or simple object to be stored
    */
   store(data) {
@@ -66,6 +69,10 @@ class Credentials {
     this._hasData = true;
   };
 
+  /**
+   * Fetch encrypted data
+   * @returns Decrypted data
+   */
   fetch() {
     const decipher = crypto.createDecipheriv(this._algorithm, this._key, this._iv);
     let decrypted = decipher.update(this._encrypted, 'hex', 'utf8');
@@ -79,6 +86,10 @@ class Credentials {
     }
   };
 
+  /**
+   * Check if data has been stored
+   * @returns {boolean} True if data has been stored
+   */
   hasData() {
     return this._hasData;
   };

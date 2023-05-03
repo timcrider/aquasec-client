@@ -1,7 +1,7 @@
 
 /**
  * Pretty formatter for test log messages
- * @param {string} prefix 
+ * @param {string} prefix
  * @returns anonymous function that returns a string
  */
 function testLog(prefix) {

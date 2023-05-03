@@ -2,10 +2,14 @@ const https = require('https');
 const credentials = require('./credentials');
 const { URL } = require('node:url');
 
+/**
+ * AquaClient class
+ * @class AquaClient
+ */
 class AquaClient {
   /**
-   * 
-   * @param {*} args 
+   * Create a new AquaClient instance
+   * @param {*} args
    */
   constructor(args={}) {
     this._instance = null;
@@ -41,7 +45,7 @@ class AquaClient {
 
   /**
    * Set the token
-   * @param {*} token 
+   * @param {string} token
    */
   setToken(token) {
     Object.defineProperty(this, "_token", {enumerable: false, writable: true});
@@ -50,8 +54,8 @@ class AquaClient {
   };
 
   /**
-   * 
-   * @param {*} args 
+   * Main request method
+   * @param {*} args
    * @returns Promise
    */
   request(args={method: 'GET', endpoint: '', querystring: {}, headers: {}, body: {}}) {
@@ -105,30 +109,30 @@ class AquaClient {
   };
 
   /**
-   * 
-   * @param {*} args 
-   * @returns 
+   * Alias for a GET request
+   * @param {*} args
+   * @returns Promise
    */
   get(args={endpoint: '', querystring: {}, headers: {}}) {
     return this.request({method: 'GET', ...args});
   };
 
   /**
-   * 
-   * @param {*} args 
-   * @returns 
+   * Alias for a POST request
+   * @param {*} args
+   * @returns Promise
    */
   post(args={endpoint: '', querystring: {}, headers: {}, body: {}}) {
     return this.request({method: 'POST', ...args});
   };
 
   /**
-   * 
-   * @param {string} path 
-   * @param {object} qs 
-   * @param {number} currentPage 
-   * @param {number} perPage 
-   * @returns 
+   * Get a single page from a paginated aqua endpoint
+   * @param {string} path
+   * @param {object} qs
+   * @param {number} currentPage
+   * @param {number} perPage
+   * @returns Promise
    */
   getPage(path, qs={}, currentPage=1, perPage=1000) {
     if (perPage > this._options.per_page_max) {
@@ -140,9 +144,9 @@ class AquaClient {
 
   /**
    * Fetch all data from an aqua endpoint
-   * @param {string} path 
-   * @param {object} qs 
-   * @returns 
+   * @param {string} path
+   * @param {object} qs
+   * @returns Promise
    */
   getAll(path="", qs={}) {
     // @todo Instead of doing this synchronously, we should do it asynchronously
@@ -193,10 +197,21 @@ class AquaClient {
     return url.toString();
   }
 
+  /**
+   * Fetch authentication token using valid credentials
+   * @param {Credentials} credentials
+   * @returns Promise
+   */
   fetchToken(credentials) {
     return this.request({method: 'POST', endpoint: '/api/v1/login', body: credentials.fetch()});
   }
 
+  /**
+   * Authenticate using credentials and store the token for future requests
+   * @param {Credentials} credentials
+   * @returns token
+   * @throws Error
+   */
   authenticate(credentials) {
     return new Promise (async (resolve, reject) => {
       try {

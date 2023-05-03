@@ -49,5 +49,5 @@ test(testlog('Testing express binding'), async (t) => {
 
   // stop local web server
   console.log(testlog(`Stopping local server...`, 'local-rest-server'));
-  localsrv.stop(); 
+  localsrv.stop();
 });
