@@ -58,5 +58,8 @@
               "editor.formatOnSave": false
           },
           "prettier-eslint.eslintIntegration": true
-    }
+  },
+  "mounts": [
+    "type=bind,source=${localEnv:HOME}/.ssh,target=/home/node/.ssh,readonly"
+  ]
 }
