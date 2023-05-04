@@ -8,6 +8,7 @@ const Package = require('../package.json');
  * @class AquaClient
  */
 class AquaClient {
+
   /**
    * Create a new AquaClient instance
    * @param {*} args
@@ -20,9 +21,7 @@ class AquaClient {
       this.setInstance(args.instance);
     }
 
-    // User authentication (used to get token)
-
-    // Authentication token
+    // Authentication token holder
     this._token = new credentials();
     Object.defineProperty(this, "_token", {enumerable: false, writable: false});
 
@@ -40,8 +39,8 @@ class AquaClient {
     if (typeof instance !== 'string') {
       throw new Error('Instance must be a string');
     }
-      this._instance = instance;
 
+    this._instance = instance;
   };
 
   /**
@@ -59,7 +58,8 @@ class AquaClient {
    * @param {*} args
    * @returns Promise
    */
-  request(args={method: 'GET', endpoint: '', querystring: {}, headers: {}, body: {}}) {
+  request(endpoint, args={method: 'GET', querystring: {}, headers: {}, body: {}}) {
+    args.endpoint = endpoint;
     let target = this.buildUrl(args.endpoint, args.querystring);
     const isPost = args.method === 'POST';
 
@@ -114,17 +114,18 @@ class AquaClient {
    * @param {*} args
    * @returns Promise
    */
-  get(args={endpoint: '', querystring: {}, headers: {}}) {
-    return this.request({method: 'GET', ...args});
+  get(endpoint, args={querystring: {}, headers: {}}) {
+    return this.request(endpoint, {method: 'GET', ...args});
   };
 
   /**
    * Alias for a POST request
+   * @param {string} endpoint
    * @param {*} args
    * @returns Promise
    */
-  post(args={endpoint: '', querystring: {}, headers: {}, body: {}}) {
-    return this.request({method: 'POST', ...args});
+  post(endpoint, args={querystring: {}, headers: {}, body: {}}) {
+    return this.request(endpoint, {method: 'POST', ...args});
   };
 
   /**
@@ -135,12 +136,12 @@ class AquaClient {
    * @param {number} perPage
    * @returns Promise
    */
-  getPage(path, qs={}, currentPage=1, perPage=1000) {
-    if (perPage > this._options.per_page_max) {
+  getPage(path, args={querystring: {}, page: 1, pageSize: 1000}) {
+    if (args.pageSize > this._options.per_page_max) {
       throw new Error(`perPage must be less than or equal to ${this._options.per_page_max}`);
     }
 
-    return this.get(path, {...qs, ...{page: currentPage, pagesize: perPage}});
+    return this.get(path, args);
   };
 
   /**
@@ -149,14 +150,14 @@ class AquaClient {
    * @param {object} qs
    * @returns Promise
    */
-  getAll(path="", qs={}) {
+  getAll(path="", args={querystring: {}}) {
     // @todo Instead of doing this synchronously, we should do it asynchronously
     return new Promise(async (resolve, reject) => {
-      let first = await this.getPage(path, qs, 1, 1);
+      let first = await this.getPage(path, {querystring: args.querystring, page: 1, pageSize: 1});
 
       // If we have less than the max per page, we can just fetch and return the first page
       if (first.count <= this._options.per_page_max) {
-        let all = await this.getPage(path, qs, 1, this._options.per_page_max)
+        let all = await this.getPage(path, {querystring: args.querystring, page: 1, pageSize: this._options.per_page_max});
         resolve(all);
         return;
       }
@@ -165,7 +166,8 @@ class AquaClient {
       let all = [];
 
       for (let i = 1; i <= pagesNeeded; i++) {
-        let page = await this.getPage(path, qs, i, this._options.per_page_max);
+        let page = await this.getPage(path, {querystring: querystring, page: i, pageSize: this._options.per_page_max});
+
         if (page.result) {
           all = [...all, ...page.result];
         }
@@ -204,7 +206,7 @@ class AquaClient {
    * @returns Promise
    */
   fetchToken(credentials) {
-    return this.request({method: 'POST', endpoint: '/api/v1/login', body: credentials.fetch()});
+    return this.post('/api/v1/login', {body: credentials.fetch()});
   }
 
   /**
@@ -236,7 +238,6 @@ class AquaClient {
       client: Package.version
     };
   }
-
 }
 
 module.exports = AquaClient;

@@ -26,8 +26,13 @@ $ npm i @timcrider/aqua-client
   await client.authenticate(auth);
 
   // Get registries
-  let registries = await client.get({endpoint: '/api/v1/registries'});
+  let registries = await client.get('/api/v1/registries');
   console.log(JSON.stringify(registries, null, 2))
+
+  // Get images
+  let images = await client.get('/api/v1/images', {query: {registry: '<registry name>'}});
+  console.log(JSON.stringify(images, null, 2))
+
 })();
 
 ```

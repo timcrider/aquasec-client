@@ -34,17 +34,17 @@ test(testlog('Testing express binding'), async (t) => {
 
   // hit the main endpoint and ensure we got a thing
   console.log(testlog('Checking root endpoint for a valid rest server', 'local-rest-server'));
-  let x = await client.request({method: 'GET', endpoint: '/', querystring: {page: 1, limit: 10}});
+  let x = await client.request('/', {method: 'GET', querystring: {page: 1, limit: 10}});
   assert.deepEqual(x, {message: 'Hello World!', ok: true, foo: 'bar'});
 
   // hit the main endpoint using the get method and ensure we got a thing
   console.log(testlog('Checking root endpoint for a valid rest server using GET method', 'local-rest-server'));
-  x = await client.get({endpoint: '/', querystring: {page: 1, limit: 10}});
+  x = await client.get('/', {querystring: {page: 1, limit: 10}});
   assert.deepEqual(x, {message: 'Hello World!', ok: true, foo: 'bar'});
 
   // hit the /post endpoint using the post method and ensure we got a thing
   console.log(testlog('Checking /post endpoint for a valid rest server using POST method', 'local-rest-server'));
-  x = await client.post({endpoint: '/post', body: {foo: 'bar'}});
+  x = await client.post('/post', { body: {foo: 'bar'}});
   assert.deepEqual(x, {message: 'Hello World!', ok: true, foo: 'bar', body: {foo: 'bar'}});
 
   // stop local web server
