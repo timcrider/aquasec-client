@@ -3,7 +3,6 @@ const credentials = require('./credentials');
 const { URL } = require('node:url');
 const Package = require('../package.json');
 
-
 /**
  * Aqua request arguments
  *
@@ -29,6 +28,18 @@ const Package = require('../package.json');
  * @typedef {Object} AquaClientConstructor
  * @property {string} instance Aqua instance URL
  * @property {AquaRequestConstructorOptions} options Aqua client options
+ */
+
+/**
+ * @typedef {Object} AquaReponseAnalysis
+ * @property {string} endpoint Endpoint
+ * @property {object} args Arguments
+ * @property {string} type Endpoint returns an array or object
+ * @property {object} pagination Pagination analysis
+ * @property {boolean} pagination.supported Does the endpoint support pagination
+ * @property {string} pagination.page if pagination what field contains the page number
+ * @property {string} pagination.page_size if pagination what field contains the page size
+ * @property {string} result if object, field that contains the result array
  */
 
 /**
@@ -68,14 +79,13 @@ class AquaClient {
 
     // Options
     this._options = {
-      ...options,
       ...{
         per_page_max: 1000,
         debug: false,
         ssl_verify: false
-      }
+      },
+      ...options,
     };
-
   };
 
   /**
@@ -112,6 +122,28 @@ class AquaClient {
   }
 
   /**
+   * Write console debug output
+   *
+   * @param {string} msg Debug message
+   */
+  debug(msg) {
+    if (this._options.debug) {
+      console.log(`[DEBUG] ${msg}`);
+    }
+  }
+
+  /**
+   * Dump object to console
+   *
+   * @param {object} obj Object to dump
+   */
+  dump(obj) {
+    if (this._options.debug) {
+      console.log(`[DEBUG] `, JSON.stringify(obj, null, 2));
+    }
+  };
+
+  /**
    * Main request method
    *
    * @param {string} endpoint URI Endpoint
@@ -144,6 +176,7 @@ class AquaClient {
     return new Promise((resolve, reject) => {
       let responseData = [];
 
+      this.debug(`Requesting ${target}`);
       let request = https.request(target, {
         method: args.method,
         headers: args.headers,
@@ -230,7 +263,8 @@ class AquaClient {
    * @returns Promise Parsed json object on success, rejection thrown on failure
    */
   getAll(path="", args={querystring: {}}) {
-    // @todo Instead of doing this synchronously, we should do it asynchronously
+    // @todo This only works on apis that support pagination and use page/page_size.
+    // @note This may produce unexpected results if the api does not support pagination.
     return new Promise(async (resolve, reject) => {
       let first = await this.getPage(path, {querystring: {...args.querystring, ...{page: 1, page_size: 1}}});
 
@@ -312,7 +346,7 @@ class AquaClient {
   }
 
   /**
-   * Fetch version matrix\
+   * Fetch version matrix
    *
    * @returns {object} Version matrix
    * @returns {string} Version matrix.client Client version
@@ -321,6 +355,98 @@ class AquaClient {
     return {
       client: Package.version
     };
+  }
+
+  /**
+   * Analyze an endpoint response to determine if pagination is supported
+   *
+   * @param {object} response Mixed reponse object to analyze
+   * @returns AquaReponseAnalysis
+   */
+  responseAnalyze(response={}) {
+    return new Promise (async (resolve, reject) => {
+      try {
+        let out = {
+          type: '', // Endpoint returns an array or object
+          pagination: {
+            supported: false, // Does the endpoint support pagination
+            page: 'page', // if pagination what field contains the page number
+            page_size: 'pagesize' // if pagination what field contains the page size
+          },
+          result: '' // if object, field that contains the result array
+        };
+
+        out.type = Array.isArray(response) ? 'array' : 'object';
+
+        // If the endpoint returns an array, we can't determine pagination
+        if (out.type === 'array') {
+          out.pagination.supported = false;
+          resolve(out);
+          return;
+        }
+
+        // If the endpoint returns an object, we can try to determine pagination
+        if (out.type === 'object') {
+          if (response.hasOwnProperty('result') && Array.isArray(response.result)) {
+            out.result = 'result';
+
+            // @todo determine if pagination is supported
+            if (response.hasOwnProperty('count')) {
+              if (response.count > 0 && response.result.length <= response.count) {
+                out.pagination.supported = true;
+              }
+            }
+          }
+        }
+
+        // @todo determine object pagination and result fields
+        resolve(out);
+
+      } catch (err) {
+        reject(err);
+      }
+    });
+
+  }
+
+  /**
+   * Analyze endpoint
+   *
+   * @param {string} path API endpoint
+   * @param {object} args Analysis arguments
+   * @param {object} args.querystring Querystring key/value pair object
+   * @param {object} args.headers HTTP headers key/value pair object
+   * @returns Promise AquaReponseAnalysis
+   * @throws Error on failure
+   */
+  endpointAnalyze(path="", args={querystring: {}, headers: {}}) {
+    // @note Only supports GET requests
+    // @todo determine if page returns a single object or an array
+    // @todo determine if page supports pagination and page/page_size
+    return new Promise (async (resolve, reject) => {
+      try {
+        let out = {
+          endpoint: path, // Endpoint
+          args: args, // Arguments
+          type: '', // Endpoint returns an array or object
+          pagination: {
+            supported: false, // Does the endpoint support pagination
+            page: 'page', // if pagination what field contains the page number
+            page_size: 'page_size' // if pagination what field contains the page size
+          },
+          result: '' // if object, field that contains the result array
+        };
+
+        let pagination = {page: 1, pagesize: 1};
+        let response = await this.get(path, args);
+        let resp = await this.responseAnalyze(response);
+        out = {...out, ...resp};
+
+        resolve(out);
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 }
 
