@@ -40,6 +40,7 @@ const Package = require('../package.json');
  * @property {string} pagination.page if pagination what field contains the page number
  * @property {string} pagination.page_size if pagination what field contains the page size
  * @property {string} result if object, field that contains the result array
+ * @property
  */
 
 /**
@@ -373,7 +374,8 @@ class AquaClient {
             page: 'page', // if pagination what field contains the page number
             page_size: 'pagesize' // if pagination what field contains the page size
           },
-          result: '' // if object, field that contains the result array
+          result: '', // if object, field that contains the result array
+          count: 0 // if result is an array, how many items are in the array
         };
 
         out.type = Array.isArray(response) ? 'array' : 'object';
@@ -381,6 +383,7 @@ class AquaClient {
         // If the endpoint returns an array, we can't determine pagination
         if (out.type === 'array') {
           out.pagination.supported = false;
+          out.count = response.length;
           resolve(out);
           return;
         }
@@ -389,6 +392,7 @@ class AquaClient {
         if (out.type === 'object') {
           if (response.hasOwnProperty('result') && Array.isArray(response.result)) {
             out.result = 'result';
+            out.count = response.result.length;
 
             // @todo determine if pagination is supported
             if (response.hasOwnProperty('count')) {
@@ -434,7 +438,8 @@ class AquaClient {
             page: 'page', // if pagination what field contains the page number
             page_size: 'page_size' // if pagination what field contains the page size
           },
-          result: '' // if object, field that contains the result array
+          result: '', // if object, field that contains the result array
+          count: 0 // if result is an array, how many items are in the array
         };
 
         let pagination = {page: 1, pagesize: 1};
