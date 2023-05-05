@@ -30,7 +30,7 @@ $ npm i @timcrider/aqua-client
   console.log(JSON.stringify(registries, null, 2))
 
   // Get images
-  let images = await client.get('/api/v1/images', {query: {registry: '<registry name>'}});
+  let images = await client.get('/api/v1/images', {querystring: {registry: '<registry name>'}});
   console.log(JSON.stringify(images, null, 2))
 
 })();
