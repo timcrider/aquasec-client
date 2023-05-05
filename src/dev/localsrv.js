@@ -2,11 +2,14 @@ const fork = require('child_process').fork;
 
 /**
  * LocalRestServer class
+ *
+ * @class LocalRestServer
  */
 class LocalRestServer {
   /**
    * Create a new LocalRestServer instance
-   * @param {*} args
+   *
+   * @param {*} args Reserved for future use
    */
   constructor(args={}) {
     this._child = null;
@@ -14,6 +17,7 @@ class LocalRestServer {
 
   /**
    * Fork a local web server for mock testing
+   *
    * @returns {Promise} Promise that resolves when the server is ready
    */
   start() {
