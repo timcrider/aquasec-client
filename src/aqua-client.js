@@ -40,7 +40,7 @@ const Package = require('../package.json');
  * @property {string} pagination.page if pagination what field contains the page number
  * @property {string} pagination.page_size if pagination what field contains the page size
  * @property {string} result if object, field that contains the result array
- * @property
+ * @property {number} count if result is an array, how many items are in the array
  */
 
 /**
@@ -120,7 +120,7 @@ class AquaClient {
    */
   setDebug(debug) {
     this._options.debug = debug ? true : false;
-  }
+  };
 
   /**
    * Write console debug output
@@ -131,7 +131,7 @@ class AquaClient {
     if (this._options.debug) {
       console.log(`[DEBUG] ${msg}`);
     }
-  }
+  };
 
   /**
    * Dump object to console
@@ -313,7 +313,7 @@ class AquaClient {
     }
 
     return url.toString();
-  }
+  };
 
   /**
    * Fetch authentication token using valid credentials
@@ -323,7 +323,7 @@ class AquaClient {
    */
   fetchToken(credentials) {
     return this.post('/api/v1/login', {body: credentials.fetch()});
-  }
+  };
 
   /**
    * Authenticate using credentials and store the token for future requests
@@ -344,7 +344,7 @@ class AquaClient {
         reject(err);
       }
     });
-  }
+  };
 
   /**
    * Fetch version matrix
@@ -356,7 +356,7 @@ class AquaClient {
     return {
       client: Package.version
     };
-  }
+  };
 
   /**
    * Analyze an endpoint response to determine if pagination is supported
@@ -410,8 +410,7 @@ class AquaClient {
         reject(err);
       }
     });
-
-  }
+  };
 
   /**
    * Analyze endpoint
@@ -452,7 +451,7 @@ class AquaClient {
         reject(err);
       }
     });
-  }
-}
+  };
+};
 
 module.exports = AquaClient;

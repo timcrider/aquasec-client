@@ -1,6 +1,6 @@
 {
   "name": "@timcrider/aquasec-client",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "engines": {
     "node": ">=18.0.0"
   },
@@ -11,7 +11,14 @@
   "scripts": {
     "test": "node --test-reporter=spec --test-reporter=spec --test-reporter-destination=stdout --test-reporter-destination=test.log --test tests/*.js"
   },
-  "keywords": ["aqua", "aquasec", "security", "api", "client", "rest"],
+  "keywords": [
+    "aqua",
+    "aquasec",
+    "security",
+    "api",
+    "client",
+    "rest"
+  ],
   "author": "Timothy M. Crider <timcrider@gmail.com>",
   "license": "MIT",
   "description": "Simple REST client for AquaSec API",
@@ -27,6 +34,7 @@
     "dotenv-expand": "^10.0.0"
   },
   "devDependencies": {
+    "@octokit/rest": "^19.0.7",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "selfsigned": "^2.1.1"

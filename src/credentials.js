@@ -1,3 +1,4 @@
+require('dotenv-expand').expand(require('dotenv').config());
 const crypto = require('crypto');
 
 /**
@@ -29,6 +30,12 @@ class Credentials {
     this.setKey(key);
     this.setIv(iv);
     this._encrypted = null;
+
+    // Environment variables for aqua credentials
+    this._env = {
+      id: 'AQUA_ID',
+      password: 'AQUA_PASSWORD'
+    };
 
     // Hide these properties from view
     Object.defineProperty(this, "_key", propLock);
@@ -112,6 +119,32 @@ class Credentials {
   hasData() {
     return this._hasData;
   };
+
+  /**
+   * Store auqa credentials from environment variables
+   *
+   * @param {bool} cleanup Delete the environment variables after storing
+   * @throws {Error} If environment variables are not set
+   */
+  storeEnv(cleanup=false) {
+    // Check if environment variables are set and throw an error if they are not
+    if (!process.env[this._env.id] || !process.env[this._env.password]) {
+      throw new Error(`Environment variables ${this._env.id} and ${this._env.password} must be set`);
+    }
+
+    const data = {
+      id: process.env[this._env.id],
+      password: process.env[this._env.password]
+    };
+
+    this.store(data);
+
+    if (cleanup) {
+      delete process.env[this._env.id];
+      delete process.env[this._env.password];
+    }
+  };
+
 }
 
 module.exports = Credentials;
