@@ -29,7 +29,7 @@ let port = (process.argv[2] && !isNaN(process.argv[2]) && process.argv[2] > 0 &&
       process.send({ok: true});
     }
 
-    console.log(`Local testing REST api started ${port}`)
+    console.log(`Local testing REST api listening on ${port}`)
   });
 
 })();
