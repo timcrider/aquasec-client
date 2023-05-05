@@ -1,6 +1,16 @@
 const crypto = require('crypto');
 
 /**
+ * @constant {object} propLock Lock object property
+ */
+const propLock = {enumerable: false, writable: false};
+
+/**
+ * @constant {object} propUnlock Unlock object property
+ */
+const propUnlock = {enumerable: false, writable: true};
+
+/**
  * Credentials class
  *
  * @class Credentials
@@ -21,8 +31,8 @@ class Credentials {
     this._encrypted = null;
 
     // Hide these properties from view
-    Object.defineProperty(this, "_key", {enumerable: false, writable: false});
-    Object.defineProperty(this, "_iv", {enumerable: false, writable: false});
+    Object.defineProperty(this, "_key", propLock);
+    Object.defineProperty(this, "_iv", propLock);
     Object.preventExtensions(this);
     Object.seal(this);
   };
@@ -37,9 +47,9 @@ class Credentials {
       throw new Error('Key must be a buffer');
     }
 
-    Object.defineProperty(this, "_key", {enumerable: false, writable: true});
+    Object.defineProperty(this, "_key", propUnlock);
     this._key = key;
-    Object.defineProperty(this, "_key", {enumerable: false, writable: false});
+    Object.defineProperty(this, "_key", propLock);
   };
 
   /**
@@ -52,9 +62,9 @@ class Credentials {
       throw new Error('Iv must be a buffer');
     }
 
-    Object.defineProperty(this, "_iv", {enumerable: false, writable: true});
+    Object.defineProperty(this, "_iv", propUnlock);
     this._iv = iv;
-    Object.defineProperty(this, "_iv", {enumerable: false, writable: false});
+    Object.defineProperty(this, "_iv", propLock);
   };
 
   /**
@@ -71,6 +81,7 @@ class Credentials {
     const cipher = crypto.createCipheriv(this._algorithm, this._key, this._iv);
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
+
     this._encrypted = encrypted;
     this._hasData = true;
   };

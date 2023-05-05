@@ -32,6 +32,16 @@ const Package = require('../package.json');
  */
 
 /**
+ * @constant {object} propLock Lock object property
+ */
+const propLock = {enumerable: false, writable: false};
+
+/**
+ * @constant {object} propUnlock Unlock object property
+ */
+const propUnlock = {enumerable: false, writable: true};
+
+/**
  * AquaClient class
  *
  * @class AquaClient
@@ -54,7 +64,7 @@ class AquaClient {
 
     // Authentication token holder
     this._token = new credentials();
-    Object.defineProperty(this, "_token", {enumerable: false, writable: false});
+    Object.defineProperty(this, "_token", propLock);
 
     // Options
     this._options = {
@@ -87,9 +97,9 @@ class AquaClient {
    * @param {string} token
    */
   setToken(token) {
-    Object.defineProperty(this, "_token", {enumerable: false, writable: true});
+    Object.defineProperty(this, "_token", propUnlock);
     this._token.store(token);
-    Object.defineProperty(this, "_token", {enumerable: false, writable: false});
+    Object.defineProperty(this, "_token", propLock);
   };
 
   /**
