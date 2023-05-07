@@ -31,6 +31,8 @@ const Package = require('../package.json');
  */
 
 /**
+ * Aqua response analysis object
+ *
  * @typedef {Object} AquaReponseAnalysis
  * @property {string} endpoint Endpoint
  * @property {object} args Arguments
@@ -63,10 +65,10 @@ class AquaClient {
   /**
    * Create a new AquaClient instance
    *
-   * @param {AquaClientConstructor} args AquaClient constructor arguments
+   * @param {AquaClientConstructor} string Aqua instance URL
    * @param {AquaRequestConstructorOptions} options AquaClient options
    */
-  constructor(instance, options={}) {
+  constructor(instance=null, options={}) {
     this._instance = null;
     this._port = null;
 
@@ -91,13 +93,17 @@ class AquaClient {
    * Set Aqua URL instance
    *
    * @param {string} Instance Aqua instance URL
+   * @returns {AquaClient} AquaClient instance
+   * @throws {Error} If instance is not a string
+   * @note If instance is not provided and the AQUA_URL environment variable is set, it will be used
    */
-  setInstance(instance) {
-    if (typeof instance !== 'string') {
+  setInstance(instance=null) {
+    if (instance && typeof instance !== 'string') {
       throw new Error('Instance must be a string');
     }
 
-    this._instance = instance;
+    this._instance = (!instance && process.env.AQUA_URL) ? process.env.AQUA_URL : instance;
+    return this;
   };
 
   /**

@@ -15,6 +15,28 @@ const TestCredentials = require('./data/test-credentials.json');
 // Test client
 const client = new AquaClient('https://localhost:3000');
 
+describe('Aquasec client local tests.', () => {
+  let tmpUrl = null;
+  let checkUrl = 'https://no-env-set/'
+
+  // if AQUA_URL environment variable exists, copy it to tmpUrl
+  if (process.env.AQUA_URL) {
+    tmpUrl = process.env.AQUA_URL;
+  }
+
+  process.env.AQUA_URL = checkUrl;
+  const localClient = new AquaClient();
+
+  it(testlog('Checking env instance setter'), (t) => {
+    assert.equal(localClient._instance, checkUrl);
+  });
+
+  // If tmpUrl exists, copy it back to AQUA_URL environment variable
+  if (tmpUrl) {
+    process.env.AQUA_URL = tmpUrl;
+  }
+});
+
 describe('Aquasec local mock api server.', () => {
   let localsrv = new LocalRestServer();
 

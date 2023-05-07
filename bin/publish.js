@@ -41,11 +41,9 @@ if (opts.branch === "" || opts.branch === undefined) {
   opts.branch = main;
 }
 
-
 (async () => {
   console.log('Beginning Pre-Flight Checks');
-  let releaseExists = null;
-  let tagExists = null;
+
   let remoteHash = null;
 
   // Check for existing release
