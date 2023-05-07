@@ -1,7 +1,6 @@
 # Aqua Security REST Client
 
-`@timcrider/aquasec-client` is a Node.js simple REST client for the Aqua Security API. Check the [official Aquasec documentation](https://docs.aquasec.com/docs) for more information.
-
+`@timcrider/aquasec-client` is a Node.js simple REST client for the Aqua Security API. Check the [official Aquasec documentation](https://docs.aquasec.com/docs) for specific endpoint information.
 
 ## Installation
 
@@ -16,11 +15,14 @@ $ npm i @timcrider/aqua-client
   const {AquaClient, Credentials} = require('@timcrider/aqua-client');
 
   // Create Aqua rest client
-  const client = new AquaClient({url: '<Aqua URL>'});
+  const client = new AquaClient('<Aqua URL>');
 
   // Create Aqua credentials
-  const auth = new Credentials();
-  auth.store({id: '<Aqua User>', password: '<Aqua Password>', remember: true});
+  const auth = new Credentials()store({
+    id: '<Aqua User>',
+    password: '<Aqua Password>',
+    remember: true
+  });
 
   // Login to Aqua
   await client.authenticate(auth);

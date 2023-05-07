@@ -13,7 +13,7 @@ const LocalRestServer = require('../src/dev/localsrv');
 const TestCredentials = require('./data/test-credentials.json');
 
 // Test client
-const client = new AquaClient({instance: 'https://localhost:3000'});
+const client = new AquaClient('https://localhost:3000');
 
 describe('Aquasec local mock api server.', () => {
   let localsrv = new LocalRestServer();

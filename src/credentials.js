@@ -78,6 +78,7 @@ class Credentials {
    * Store and encrypt a string or simple object
    *
    * @param {string|object} data String or simple object to be stored
+   * @returns {object} Credentials instance
    */
   store(data) {
     // If data is an ojbect, convert it to a string
@@ -91,6 +92,8 @@ class Credentials {
 
     this._encrypted = encrypted;
     this._hasData = true;
+
+    return this;
   };
 
   /**
@@ -124,6 +127,7 @@ class Credentials {
    * Store auqa credentials from environment variables
    *
    * @param {bool} cleanup Delete the environment variables after storing
+   * @returns {Credentials} Credentials instance
    * @throws {Error} If environment variables are not set
    */
   storeEnv(cleanup=false) {
@@ -143,6 +147,8 @@ class Credentials {
       delete process.env[this._env.id];
       delete process.env[this._env.password];
     }
+
+    return this;
   };
 
 }

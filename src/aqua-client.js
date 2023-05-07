@@ -66,13 +66,11 @@ class AquaClient {
    * @param {AquaClientConstructor} args AquaClient constructor arguments
    * @param {AquaRequestConstructorOptions} options AquaClient options
    */
-  constructor(args={}, options={}) {
+  constructor(instance, options={}) {
     this._instance = null;
     this._port = null;
 
-    if (args.instance) {
-      this.setInstance(args.instance);
-    }
+    this.setInstance(instance);
 
     // Authentication token holder
     this._token = new credentials();
@@ -403,7 +401,6 @@ class AquaClient {
           }
         }
 
-        // @todo determine object pagination and result fields
         resolve(out);
 
       } catch (err) {

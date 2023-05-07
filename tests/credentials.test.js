@@ -46,3 +46,15 @@ describe('Testing AES192 credentials encryption', () => {
   });
 });
 
+// Object chaining
+describe('Testing credentials object chaining', () => {
+  let credchain = new Credentials().store(TestCredentials);
+
+  it(testlog('Checking encrypted credentials are encrypted', 'default'), (t) => {
+    assert.notDeepEqual(credchain._encrypted, TestCredentials, `Credentials are not the same`);
+  });
+
+  it(testlog('Checking decrypted credentials are decrypted', 'default'), (t) => {
+    assert.deepEqual(credchain.fetch(), TestCredentials);
+  });
+});
