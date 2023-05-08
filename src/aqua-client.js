@@ -340,6 +340,10 @@ class AquaClient {
     return new Promise (async (resolve, reject) => {
       try {
         let token = await this.fetchToken(credentials);
+        if (token.code !== 200 || !token.token) {
+          throw new Error(`Authentication failed: ${token.message}`);
+        }
+
         this.setToken(token.token);
 
         // @todo check options to reutrn token or true
