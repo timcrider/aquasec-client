@@ -347,7 +347,7 @@ class AquaClient {
         this.setToken(token.token);
 
         // @todo check options to reutrn token or true
-        resolve(token);
+        resolve(this._token);
       } catch (err) {
         reject(err);
       }
