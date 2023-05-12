@@ -284,7 +284,7 @@ class AquaClient {
       let all = [];
 
       for (let i = 1; i <= pagesNeeded; i++) {
-        let page = await this.getPage(path, {querystring: {...querystring, ...{page: i, page_size: this._options.per_page_max}}});
+        let page = await this.getPage(path, {querystring: {...args.querystring, ...{page: i, page_size: this._options.per_page_max}}});
 
         if (page.result) {
           all = [...all, ...page.result];
