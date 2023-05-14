@@ -56,6 +56,47 @@ const propLock = {enumerable: false, writable: false};
 const propUnlock = {enumerable: false, writable: true};
 
 /**
+ * Fetch an entity from a heirarchical response
+ *
+ * @param {string|number} id Numeric ID of the entity to fetch
+ * @param {array|object} data Heirarchical response data
+ * @param {array} stack Reference to the stack array
+ * @returns entity
+ * @note Currently only supports entities under level1s root
+ */
+function fetchEntityById(id, data, stack=[]) {
+  let entity = null;
+
+  if (Array.isArray(data)) {
+    for (let i = 0; i < data.length; i++) {
+      entity = fetchEntityById(id, data[i], stack);
+      if (entity) {
+        return entity;
+      }
+    }
+  }
+
+  if (data.id && data.id == id) {
+    return data;
+  }
+
+  if (data.children && Array.isArray(data.children)) {
+    stack.push(Object.assign({}, data, {children: undefined}));
+
+    for (let i = 0; i < data.children.length; i++) {
+      stack.push(Object.assign({}, data.children[i], {children: undefined}));
+      entity = fetchEntityById(id, data.children[i], stack);
+      stack.pop();
+
+      if (entity) {
+        return entity;
+      }
+    }
+    stack.pop();
+  }
+};
+
+/**
  * AquaClient class
  *
  * @class AquaClient
@@ -459,6 +500,32 @@ class AquaClient {
       }
     });
   };
+
+  /**
+   * Fetch an entity from the hierarchy by id and return the entity and backtrace
+   *
+   * @param {string|number} id Entity id
+   * @param {object} data Hierarchy data (from /api/v2/explorer/hierarchy)
+   * @returns Promise {entity: {}, backtrace: []}
+   * @throws Error on failure
+   */
+  fetchEntityFromHierarchy(id, data={}) {
+    return new Promise (async (resolve, reject) => {
+      try {
+        if (!data.hasOwnProperty('level1s')) {
+          throw new Error(`Invalid hierarchy data. Missing level1s (see: /api/v2/explorer/hierarchy)`);
+        }
+
+        let backtrace = [];
+        let entity = fetchEntityById(id, data.level1s, backtrace);
+
+        resolve({entity: entity, backtrace: backtrace});
+      } catch (err) {
+        reject(err);
+      }
+    });
+  };
+
 };
 
 module.exports = AquaClient;
