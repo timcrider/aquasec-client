@@ -29,5 +29,5 @@ jobs:
       - run: npm test
 
       - name: Test Summary
-      - uses: pcolby/tap-summary@v1
+        uses: pcolby/tap-summary@v1
       
