@@ -32,7 +32,7 @@ await client.authenticate(auth);
 
 // List all registries
 let registries = await client.get('/api/v1/registries');
-console.log(JSON.stringify(registries, null, 2))
+console.log(JSON.stringify(registries, null, 2));
 
 ```
 

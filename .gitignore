@@ -9,3 +9,4 @@ node_modules
 
 # Logs
 test.log
+test.tap

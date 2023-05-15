@@ -9,7 +9,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "node --test-reporter=spec --test-reporter=spec --test-reporter-destination=stdout --test-reporter-destination=test.log --test tests/*.js"
+    "test": "node --test-reporter=spec --test-reporter=tap --test-reporter-destination=stdout --test-reporter-destination=test.tap --test tests/*.js"
   },
   "keywords": [
     "aqua",
