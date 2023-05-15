@@ -28,8 +28,7 @@ jobs:
       - run: npm ci
       - run: npm test
 
+      - uses: pcolby/tap-summary@v1
       - name: Test Summary
-        uses: test-summary/action@v2
-        with:
-          paths: "test.tap"
-        if: always()
+
+
