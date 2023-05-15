@@ -28,7 +28,6 @@ jobs:
       - run: npm ci
       - run: npm test
 
-      - uses: pcolby/tap-summary@v1
       - name: Test Summary
-
-
+      - uses: pcolby/tap-summary@v1
+      
