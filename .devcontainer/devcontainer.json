@@ -24,6 +24,7 @@
     "stkb.rewrap", // rewrap comments after n characters on one line
     "vscode-icons-team.vscode-icons", // Better file extension icons
     "github.vscode-pull-request-github", // Github interaction
+    "github.vscode-github-actions", // Github actions
   ],
   "settings": {
     "files.eol": "\n",

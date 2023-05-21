@@ -4,7 +4,9 @@
 
 Check the [official Aquasec documentation](https://docs.aquasec.com/docs) for specific endpoint information.
 
-## Basic Usage
+## Usage
+
+## Installation
 
 ```bash
 $ npm i @timcrider/aqua-client
@@ -22,8 +24,7 @@ const client = new AquaClient('<Aqua URL>');
 // Create authentication credentials object
 const auth = new Credentials().store({
   id: '<Aqua User>',
-  password: '<Aqua Password>',
-  remember: true
+  password: '<Aqua Password>'
 });
 
 // Login to Aqua and store the token in the client.
