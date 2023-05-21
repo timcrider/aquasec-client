@@ -6,7 +6,7 @@ Check the [official Aquasec documentation](https://docs.aquasec.com/docs) for sp
 
 ## Usage
 
-## Installation
+### Installation
 
 ```bash
 $ npm i @timcrider/aqua-client
@@ -36,6 +36,63 @@ let registries = await client.get('/api/v1/registries');
 console.log(JSON.stringify(registries, null, 2));
 
 ```
+
+### The Credentials Object
+
+The credentials object does **not** keep your secrets completely safe. The purpose of this object is to limit the exposure of the credentials at rest during the aqua client lifecycle.
+
+```js
+    /* String creds */
+    let strCreds = new Credentials().store("this is a secret");
+
+    // Credentials {
+    //   _hasData: true,
+    //   _algorithm: 'aes-256-cbc',
+    //   _encrypted: '<some hash>',
+    //   _env: { id: 'AQUA_ID', password: 'AQUA_PASSWORD' }
+    // }
+    console.log(strCreds);
+
+    // strCreds is this is a secret
+    console.log(`strCreds is ${strCreds.fetch()}`);
+
+
+    /* Object creds */
+    let objCreds = new Credentials().store({foo: 'bar'});
+
+    // Credentials {
+    //   _hasData: true,
+    //   _algorithm: 'aes-256-cbc',
+    //   _encrypted: '<some hash>',
+    //   _env: { id: 'AQUA_ID', password: 'AQUA_PASSWORD' }
+    // }
+    console.log(objCreds);
+
+    // objCreds is {
+    //   "foo": "bar"
+    // }
+    console.log(`objCreds is ${JSON.stringify(objCreds.fetch(), null, 2)}`);
+
+    /* Store credentials using environment variables */
+    process.env.AQUA_ID = "foo";
+    process.env.AQUA_PASSWORD = "bar"
+    let envCreds = new Credentials().storeEnv();
+
+    // Credentials {
+    //   _hasData: true,
+    //   _algorithm: 'aes-256-cbc',
+    //   _encrypted: '<some hash>',
+    //   _env: { id: 'AQUA_ID', password: 'AQUA_PASSWORD' }
+    // }
+    console.log(envCreds);
+
+    // envCreds is {
+    //  "id": "foo",
+    //  "password": "bar"
+    // }
+    console.log(`envCreds is ${JSON.stringify(envCreds.fetch(), null, 2)}`);
+```
+
 
 ### Environment Variables
 
